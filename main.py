@@ -1,45 +1,8 @@
-# import json
-# import requests
-# from pandas import json_normalize
-# from urllib.parse import urlencode
-
-# from typing import Dict, List, Union, Optional, Any
-# import warnings
-
-# warnings.filterwarnings("ignore")
-
-
-# def tm_API(endpoint: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-# 	"""Obtain data from the Token Metrics Data API
-
-# 	Args:
-# 		endpoint (str): The endpoint of the API
-# 		payload (Optional[Dict[str, Any]], optional): The parameters to send to the API. Defaults to None.
-
-# 	Returns:
-# 		Dict[str, Any]: The response from the API
-# 	"""
-
-# 	if payload:
-# 		url = 'https://alpha.data-api.tokenmetrics.com/v1/' + endpoint + '?' + urlencode(payload)
-# 	else:
-# 		url = 'https://alpha.data-api.tokenmetrics.com/v1/' + endpoint 
-# 	headers = {'Accept': 'application/json', 'Content-Type': 'application/json', 'api_key': API_key}
-# 	response = requests.get(url, headers=headers)
-# 	return response.json()
-
-# endpoint = 'tokens'
-# params = {}
-# response = tm_API(endpoint,params)
-# coins = json_normalize(response['data'])
-# coins = coins.sort_values(by = 'TOKEN_ID').reset_index(drop = True)
-# coins[coins.NAME.isin(['Bitcoin','Ethereum','Litecoin'])].reset_index(drop = True)
-
-
-
 from dotenv import load_dotenv
 import requests
+from flask import Flask
 from pandas import json_normalize
+import pandas as pd
 from urllib.parse import urlencode
 import os
 
@@ -48,6 +11,13 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return tm_API('tokens')
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)  
 load_dotenv()
 API_key = os.getenv('API_KEY')
 
@@ -69,6 +39,7 @@ def tm_API(endpoint: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str,
 		url = 'https://api.tokenmetrics.com/' + endpoint 
 	headers = {'Accept': 'application/json', 'Content-Type': 'application/json', 'api_key': API_key}
 	response = requests.get(url, headers=headers)
+	print(response.json())
 	return response.json()
 
 endpoint = 'tokens'
@@ -93,3 +64,5 @@ btcusdt['Close time'] = btcusdt['Close time'].dt.strftime('%Y-%m-%d')
 btcusdt.rename(columns = {'Close time': 'Date'}, inplace = True)
 btcusdt[['Open', 'High', 'Low', 'Close', 'Volume']] = btcusdt[['Open', 'High', 'Low', 'Close', 'Volume']].astype(float)
 btcusdt = btcusdt[['Date','Open', 'High', 'Low', 'Close', 'Volume']]
+
+
