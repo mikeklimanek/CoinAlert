@@ -59,6 +59,14 @@ def process_and_store_data(data, conn):
         ))
 
     conn.commit()
+    
+def fetch_crypto_data(api_url):
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+
 
 api_result = requests.get(API_URL + '?limit=10')
 api_result_json = api_result.json()
@@ -66,7 +74,6 @@ process_and_store_data(api_result_json, conn)
 
 conn.sync()
 
-# print(conn.execute("select * from cryptocurrencies").fetchall())
 
 
 
