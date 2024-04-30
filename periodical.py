@@ -1,11 +1,7 @@
 import schedule
 import time
-import requests
-from datetime import datetime
 import dotenv
-import pytz
 import os
-import libsql_experimental as libsql
 from crypto import fetch_crypto_data, initialize_db, process_and_store_data, conn
 
 dotenv.load_dotenv()
