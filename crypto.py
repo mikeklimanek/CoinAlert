@@ -30,7 +30,8 @@ def initialize_db(conn):
             percent_change_24h REAL,
             percent_change_7d REAL,
             last_updated INTEGER,
-            entry_datetime DATETIME DEFAULT CURRENT_TIMESTAMP
+            entry_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id, entry_datetime)
         );
     """)
     conn.commit()
@@ -65,7 +66,7 @@ process_and_store_data(api_result_json, conn)
 
 conn.sync()
 
-print(conn.execute("select * from cryptocurrencies").fetchall())
+# print(conn.execute("select * from cryptocurrencies").fetchall())
 
 
 
