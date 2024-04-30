@@ -1,1 +1,3 @@
 .env
+coin-alert.db
+coin-alert.db-client_wal_index
