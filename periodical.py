@@ -2,7 +2,8 @@ import schedule
 import time
 import dotenv
 import os
-from crypto import fetch_crypto_data, initialize_db, process_and_store_data, conn
+from crypto import fetch_crypto_data, conn
+from database.crypto_db import process_and_store_data
 
 dotenv.load_dotenv()
 API_URL = os.getenv('API_URL')
