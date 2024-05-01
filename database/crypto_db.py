@@ -1,14 +1,9 @@
 from datetime import datetime
 import pytz
-import libsql_experimental as libsql
-import os
 
-url = os.getenv("TURSO_DATABASE_URL")
-auth_token = os.getenv("TURSO_AUTH_TOKEN")
-conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
-conn.sync()
 
 def initialize_db(conn):
+    from crypto import conn
     conn.execute("""
         CREATE TABLE IF NOT EXISTS cryptocurrencies (
             id TEXT,

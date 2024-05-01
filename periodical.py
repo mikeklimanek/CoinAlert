@@ -1,14 +1,9 @@
 import schedule
 import time
-import dotenv
 import os
 from crypto import fetch_crypto_data, conn
 from database.crypto_db import process_and_store_data
 
-dotenv.load_dotenv()
-API_URL = os.getenv('API_URL')
-url = os.getenv("TURSO_DATABASE_URL")
-auth_token = os.getenv("TURSO_AUTH_TOKEN")
 
 
 

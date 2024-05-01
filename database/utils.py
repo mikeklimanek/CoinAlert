@@ -1,14 +1,8 @@
-import os
-import libsql_experimental as libsql
 
 
-url = os.getenv("TURSO_DATABASE_URL")
-auth_token = os.getenv("TURSO_AUTH_TOKEN")
-
-conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
-conn.sync()
 
 def generate_new_id(symbol, conn):
+    from crypto import conn 
     letter_map = {
         "Bitcoin": "B", "Ethereum": "E", "Cardano": "C", "Binance Coin": "N",
         "Tether": "T", "XRP": "X", "Dogecoin": "D", "Polkadot": "P",
