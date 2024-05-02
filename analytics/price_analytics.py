@@ -16,7 +16,7 @@ def print_price_changes(conn, symbol):
     LIMIT 6
     """
     
-    results = conn.execute(query, [symbol]).fetchall()
+    results = conn.execute(query, (symbol,)).fetchall()
 
     if len(results) < 6:
         print(f"Insufficient data for {symbol}")
@@ -39,5 +39,5 @@ def print_price_changes(conn, symbol):
         change_percent = ((next_price - current_price) / current_price) * 100
         print(f"Change from {ids[i]} to {ids[i + 1]}: {change_percent:.2f}%")
         
-print_price_changes(conn, 'Bitcoin')
+print_price_changes(conn, 'BTC')
     
