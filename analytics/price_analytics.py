@@ -26,18 +26,20 @@ def print_price_changes(conn, symbol):
     
     prices = [row[1] for row in results]
     ids = [row[0] for row in results]
-    print(f"Price changes for {symbol} from last day:")
+    print(f"Price changes for {symbol} from last day:\n*********************************")
     first_price = prices[0]
     last_price = prices[-1]
     
     total_change_percent = ((last_price - first_price) / first_price) * 100
-    print(f"Total change from {ids[0]} to {ids[-1]}: {total_change_percent:.2f}%")
+    print(f"Total change from -24h till now === {total_change_percent:.2f}%\n*********************************")
     
+    hours = 24
     for i in range(len(prices) - 1):
         current_price = prices[i]
         next_price = prices[i + 1]
         change_percent = ((next_price - current_price) / current_price) * 100
-        print(f"Change from {ids[i]} to {ids[i + 1]}: {change_percent:.2f}%")
+        print(f"Change from -{hours}h to -{hours-4}h === {change_percent:.2f}%")
+        hours -= 4
         
 print_price_changes(conn, 'BTC')
     
