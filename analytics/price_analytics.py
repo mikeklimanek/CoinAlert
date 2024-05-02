@@ -26,12 +26,13 @@ def print_price_changes(conn, symbol):
     
     prices = [row[1] for row in results]
     ids = [row[0] for row in results]
-    print(f"Price changes for {symbol} from last day:\n*********************************")
+    print("_______________________________________________________________")
+    print(f"Price changes for {symbol} from last day:\n_______________________________________________________________")
     first_price = prices[0]
     last_price = prices[-1]
     
     total_change_percent = ((last_price - first_price) / first_price) * 100
-    print(f"Total change from -24h till now === {total_change_percent:.2f}%   ||   from ${first_price} to ${last_price} \n*********************************")
+    print(f"Total change from -24h till now === {total_change_percent:.2f}%   ||   from ${first_price} to ${last_price} \n")
     
     hours = 24
     for i in range(len(prices) - 1):
