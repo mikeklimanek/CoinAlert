@@ -3,6 +3,8 @@ import dotenv
 import os
 import libsql_experimental as libsql
 from database.crypto_db import process_and_store_data
+from analytics.changes_alert import all_price_changes
+from utils.email_setup import send_email
 
 dotenv.load_dotenv()
 API_URL = os.getenv('API_URL')
@@ -26,6 +28,24 @@ api_result_json = api_result.json()
 process_and_store_data(api_result_json, conn)
 
 conn.sync()
+
+def send_notification(changes):
+    if changes:
+        subject = "Significant Crypto Price Changes"
+        body = "<strong>Here are the significant changes:</strong><br><br>" + "<br><br>".join(changes)
+        send_email(subject, body)
+
+significant_changes = []
+for symbol in ['BTC', 'ETH', 'ADA', 'BNB', 'USDT', 'XRP', 'DOGE', 'DOT', 'SOL', 'UNI']:
+    error, changes = all_price_changes(conn, symbol)
+    if error:
+        print(error)
+    if changes:
+        
+        significant_changes.extend(['<br>'.join(changes)])
+
+if significant_changes:
+    send_notification(significant_changes)
 
 
 
