@@ -1,12 +1,6 @@
-import dotenv
-import os
-import libsql_experimental as libsql
-dotenv.load_dotenv()
-url = os.getenv("TURSO_DATABASE_URL")
-auth_token = os.getenv("TURSO_AUTH_TOKEN")
+from utils.auth import get_database_connection
 
-conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
-conn.sync()
+conn = get_database_connection()
 
 def print_price_changes(conn, symbol):
     query = """

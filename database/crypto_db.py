@@ -1,15 +1,10 @@
 from datetime import datetime
 import pytz
-import os
-import libsql_experimental as libsql
 from .utils import generate_new_id
+from utils.auth import get_database_connection
 
-API_URL = os.getenv('API_URL')
-url = os.getenv("TURSO_DATABASE_URL")
-auth_token = os.getenv("TURSO_AUTH_TOKEN")
+conn = get_database_connection()
 
-conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
-conn.sync()
 
 
 def initialize_db(conn):
