@@ -1,8 +1,7 @@
 # CoinAlert
-# Crypto Price Alert System
 
 ## Overview
-This project is designed to monitor cryptocurrency prices, updating every 4 hours via an API pipeline that interacts with a live database. The system cleans and processes the incoming data, calculates changes between each update, and sends email notifications for any price changes in cryptocurrencies that exceed a 5% threshold, either positive or negative.
+This Crypto Price Alert System is designed to monitor cryptocurrency prices, updating every 4 hours via an API pipeline that interacts with a live database. The system cleans and processes the incoming data, calculates changes between each update, and sends email notifications for any price changes in cryptocurrencies that exceed a 5% threshold, either positive or negative.
 
 ## Installation
 
