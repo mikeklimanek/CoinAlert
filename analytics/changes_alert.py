@@ -38,7 +38,7 @@ def all_price_changes(conn, symbol):
 
     message_lines = []
     if abs(total_change_percent) >= 5:          # settings for percentage change in 24hrs
-        message_lines.append(f"Total change for {symbol} in last 24 hours === {total_change_percent:.2f}% from ${first_price} to ${last_price}")
+        message_lines.append(f"{symbol} Total change for in last 24 hours === {total_change_percent:.2f}% from ${first_price} to ${last_price}")
 
 
     hours = 24
