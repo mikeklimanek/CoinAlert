@@ -33,7 +33,17 @@ def send_notification(changes):
     if changes:
         subject = "Significant Crypto Price Changes"
         body = "<strong>Here are the significant changes:</strong><br><br>" + "<br><br>".join(changes)
-        send_email(subject, body)
+        try:
+            send_email(subject, body)
+            print("Email sent successfully!")
+        except Exception as e:
+            print("Error sending email:", str(e))
+            print("Retrying one more time...")
+            try:
+                send_email(subject, body)
+                print("Email sent successfully after retry!")
+            except Exception as e:
+                print("Error sending email after retry:", str(e))
 
 significant_changes = []
 for symbol in ['BTC', 'ETH', 'ADA', 'BNB', 'USDT', 'XRP', 'DOGE', 'DOT', 'SOL', 'UNI']:
@@ -46,6 +56,8 @@ for symbol in ['BTC', 'ETH', 'ADA', 'BNB', 'USDT', 'XRP', 'DOGE', 'DOT', 'SOL', 
 
 if significant_changes:
     send_notification(significant_changes)
+else:
+    print("No significant changes found.")
 
 
 
