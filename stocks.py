@@ -73,7 +73,7 @@ def load_stock_symbols(file_path):
 start_date, end_date = get_two_years_ago()
 multiplier = 1
 timespan = 'day'
-symbols_file = 'symbols.txt'
+symbols_file = 'utils/symbols.txt'
 
 stock_symbols = load_stock_symbols(symbols_file)
 

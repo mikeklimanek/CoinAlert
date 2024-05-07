@@ -1,4 +1,4 @@
-from utils.auth import get_database_connection
+from v1_crypto.utils.auth import get_database_connection
 
 conn = get_database_connection()
 

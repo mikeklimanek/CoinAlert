@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
-from .utils import generate_new_id
-from utils.auth import get_database_connection
+from v1_crypto.utils import generate_new_id
+from v1_crypto.utils.auth import get_database_connection
 
 conn = get_database_connection()
 

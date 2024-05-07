@@ -1,4 +1,4 @@
-from utils.auth import get_database_connection
+from v1_crypto.utils.auth import get_database_connection
 
 conn = get_database_connection()
 
@@ -52,5 +52,3 @@ def all_price_changes(conn, symbol):
 
     
     return None, message_lines if message_lines else None
-
-

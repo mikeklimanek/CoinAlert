@@ -2,11 +2,11 @@ import requests
 import dotenv
 import os
 import libsql_experimental as libsql
-from database.crypto_db import process_and_store_data
-from analytics.changes_alert import all_price_changes
-from utils.email_setup import send_email
+from v1_crypto.database.crypto_db import process_and_store_data
+from v1_crypto.analytics.changes_alert import all_price_changes
+from v1_crypto.utils.email_setup import send_email
 
-dotenv.load_dotenv()
+dotenv.load_dotenv('CoinAlert/v1_crypto/.env')
 API_URL = os.getenv('API_URL')
 url = os.getenv("TURSO_DATABASE_URL")
 auth_token = os.getenv("TURSO_AUTH_TOKEN")

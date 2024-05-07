@@ -1,4 +1,4 @@
-from utils.auth import get_database_connection
+from v1_crypto.utils.auth import get_database_connection
 
 conn = get_database_connection()
 
@@ -59,5 +59,3 @@ def all_price_changes(conn, symbol):
         
 for i in ['BTC', 'ETH', 'ADA', 'BNB', 'USDT', 'XRP', 'DOGE', 'DOT', 'SOL', 'UNI']:
     all_price_changes(conn, i)
-
-
