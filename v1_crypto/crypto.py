@@ -2,6 +2,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import logging
 import requests
 import dotenv
 import libsql_experimental as libsql
@@ -11,6 +12,11 @@ from v1_crypto.utils.email_setup import send_email
 
 
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+logging.basicConfig(
+    level=logging.WARNING,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
 API_URL = os.getenv('API_URL')
 url = os.getenv("TURSO_DATABASE_URL")
 auth_token = os.getenv("TURSO_AUTH_TOKEN")
