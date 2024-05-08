@@ -63,8 +63,7 @@ def load_stock_symbols(file_path):
     with open(file_path, 'r') as f:
         return [line.strip() for line in f if line.strip()]
 
-symbols_file = 'utils/symbols.txt'
-stock_symbols = load_stock_symbols(symbols_file)
-
-for ticker in stock_symbols:
-    calculate_and_store_current_day_rsi(ticker)
+def update_rsi_for_all_symbols(symbols_file='utils/symbols.txt'):
+    stock_symbols = load_stock_symbols(symbols_file)
+    for ticker in stock_symbols:
+        calculate_and_store_current_day_rsi(ticker)
