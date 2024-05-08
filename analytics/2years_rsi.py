@@ -2,7 +2,6 @@ import libsql_experimental as libsql
 import pandas as pd
 from dotenv import load_dotenv
 import os
-from datetime import datetime, timedelta
 
 load_dotenv()
 url = os.getenv("TURSO_DATABASE_URL")
@@ -23,14 +22,11 @@ def calculate_rsi(prices, period=14):
 
     return rsi
 
-def get_recent_stock_data(ticker, days=20):
+def get_full_stock_data(ticker):
     table_name = f"{ticker.lower()}_historical"
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=days)
     query = f"""
     SELECT timestamp, open, close, high, low, volume 
     FROM {table_name} 
-    WHERE timestamp >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' 
     ORDER BY timestamp ASC;
     """
     rows = conn.execute(query).fetchall()
@@ -41,23 +37,34 @@ def get_recent_stock_data(ticker, days=20):
         df.set_index('timestamp', inplace=True)
         return df
     else:
-        print(f"No recent data found for {ticker}.")
+        print(f"No data found for {ticker}.")
         return None
 
-def calculate_and_store_current_day_rsi(ticker, period=14):
-    df = get_recent_stock_data(ticker, days=period + 1)
+def add_rsi_column(ticker):
+    table_name = f"{ticker.lower()}_historical"
+    alter_table_sql = f"ALTER TABLE {table_name} ADD COLUMN RSI REAL;"
+    try:
+        conn.execute(alter_table_sql)
+    except Exception as e:
+        if "duplicate column name: RSI" not in str(e):
+            print(f"Error adding RSI column to {table_name}: {e}")
+
+def calculate_and_store_rsi(ticker, period=14):
+    df = get_full_stock_data(ticker)
     if df is not None:
+        add_rsi_column(ticker)
         df['RSI'] = calculate_rsi(df['close'], period)
+
         table_name = f"{ticker.lower()}_historical"
-        update_sql = f"UPDATE {table_name} SET RSI = ? WHERE timestamp = ? AND (RSI IS NULL OR RSI = '');"
+        update_sql = f"UPDATE {table_name} SET RSI = ? WHERE timestamp = ?;"
 
         for index, row in df.iterrows():
             conn.execute(update_sql, (row['RSI'], index.strftime('%Y-%m-%d %H:%M:%S')))
         conn.commit()
 
-        print(f"RSI calculated and stored for the current day of {ticker}.")
+        print(f"RSI calculated and stored for {ticker}.")
     else:
-        print(f"Unable to calculate RSI for {ticker} due to missing recent data.")
+        print(f"Unable to calculate RSI for {ticker} due to missing data.")
 
 def load_stock_symbols(file_path):
     with open(file_path, 'r') as f:
@@ -67,4 +74,4 @@ symbols_file = 'utils/symbols.txt'
 stock_symbols = load_stock_symbols(symbols_file)
 
 for ticker in stock_symbols:
-    calculate_and_store_current_day_rsi(ticker)
+    calculate_and_store_rsi(ticker)
