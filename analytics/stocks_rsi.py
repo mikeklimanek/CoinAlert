@@ -2,7 +2,6 @@ import libsql_experimental as libsql
 import pandas as pd
 from dotenv import load_dotenv
 import os
-from datetime import datetime, timedelta
 
 load_dotenv()
 url = os.getenv("TURSO_DATABASE_URL")
@@ -23,16 +22,33 @@ def calculate_rsi(prices, period=14):
 
     return rsi
 
-def get_recent_stock_data(ticker, days=20):
+def get_latest_rsi_date(ticker):
     table_name = f"{ticker.lower()}_historical"
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=days)
     query = f"""
-    SELECT timestamp, open, close, high, low, volume 
+    SELECT timestamp 
     FROM {table_name} 
-    WHERE timestamp >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' 
-    ORDER BY timestamp ASC;
+    WHERE RSI IS NOT NULL
+    ORDER BY timestamp DESC
+    LIMIT 1;
     """
+    result = conn.execute(query).fetchone()
+    return pd.to_datetime(result[0]) if result else None
+
+def get_partial_stock_data(ticker, start_date=None):
+    table_name = f"{ticker.lower()}_historical"
+    if start_date:
+        query = f"""
+        SELECT timestamp, open, close, high, low, volume 
+        FROM {table_name} 
+        WHERE timestamp >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}'
+        ORDER BY timestamp ASC;
+        """
+    else:
+        query = f"""
+        SELECT timestamp, open, close, high, low, volume 
+        FROM {table_name} 
+        ORDER BY timestamp ASC;
+        """
     rows = conn.execute(query).fetchall()
 
     if rows:
@@ -41,29 +57,37 @@ def get_recent_stock_data(ticker, days=20):
         df.set_index('timestamp', inplace=True)
         return df
     else:
-        print(f"No recent data found for {ticker}.")
+        print(f"No data found for {ticker}.")
         return None
 
-def calculate_and_store_current_day_rsi(ticker, period=14):
-    df = get_recent_stock_data(ticker, days=period + 1)
-    if df is not None:
-        df['RSI'] = calculate_rsi(df['close'], period)
-        table_name = f"{ticker.lower()}_historical"
-        update_sql = f"UPDATE {table_name} SET RSI = ? WHERE timestamp = ? AND (RSI IS NULL OR RSI = '');"
+def calculate_and_store_rsi_incrementally(ticker, period=14):
+    latest_rsi_date = get_latest_rsi_date(ticker)
+    df_new_data = get_partial_stock_data(ticker, latest_rsi_date)
 
-        for index, row in df.iterrows():
+    if df_new_data is not None:
+        df_existing_data = get_partial_stock_data(ticker)
+        df_combined = pd.concat([df_existing_data, df_new_data]).drop_duplicates()
+
+        df_combined['RSI'] = calculate_rsi(df_combined['close'], period)
+        df_updated = df_combined.loc[df_new_data.index]
+
+        table_name = f"{ticker.lower()}_historical"
+        update_sql = f"UPDATE {table_name} SET RSI = ? WHERE timestamp = ?;"
+
+        for index, row in df_updated.iterrows():
             conn.execute(update_sql, (row['RSI'], index.strftime('%Y-%m-%d %H:%M:%S')))
         conn.commit()
 
-        print(f"RSI calculated and stored for the current day of {ticker}.")
+        print(f"RSI incrementally calculated and stored for {ticker}.")
     else:
-        print(f"Unable to calculate RSI for {ticker} due to missing recent data.")
+        print(f"Unable to calculate RSI for {ticker} due to missing data.")
 
 def load_stock_symbols(file_path):
     with open(file_path, 'r') as f:
         return [line.strip() for line in f if line.strip()]
 
-def update_rsi_for_all_symbols(symbols_file='utils/symbols.txt'):
-    stock_symbols = load_stock_symbols(symbols_file)
-    for ticker in stock_symbols:
-        calculate_and_store_current_day_rsi(ticker)
+symbols_file = 'utils/symbols.txt'
+stock_symbols = load_stock_symbols(symbols_file)
+
+for ticker in stock_symbols:
+    calculate_and_store_rsi_incrementally(ticker)
