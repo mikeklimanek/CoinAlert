@@ -1,12 +1,16 @@
+# /home/dthxsu/workspace/github.com/dthxsu/CoinAlert/v1_crypto/crypto.py
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import requests
 import dotenv
-import os
 import libsql_experimental as libsql
 from v1_crypto.database.crypto_db import process_and_store_data
 from v1_crypto.analytics.changes_alert import all_price_changes
 from v1_crypto.utils.email_setup import send_email
 
-dotenv.load_dotenv('CoinAlert/v1_crypto/.env')
+
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 API_URL = os.getenv('API_URL')
 url = os.getenv("TURSO_DATABASE_URL")
 auth_token = os.getenv("TURSO_AUTH_TOKEN")

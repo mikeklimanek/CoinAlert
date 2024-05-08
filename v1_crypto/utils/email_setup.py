@@ -1,9 +1,12 @@
+# /home/dthxsu/workspace/github.com/dthxsu/CoinAlert/v1_crypto/crypto.py
 import os
 import dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-dotenv.load_dotenv('CoinAlert/v1_crypto/.env')
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 def send_email(subject, html_content, to_emails='mike.klimanek@gmail.com', from_email='mike.klimanek@gmail.com'):

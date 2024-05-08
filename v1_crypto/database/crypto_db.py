@@ -1,7 +1,12 @@
-from datetime import datetime
+# /home/dthxsu/workspace/github.com/dthxsu/CoinAlert/v1_crypto/crypto.py
 import pytz
-from v1_crypto.utils import generate_new_id
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from v1_crypto.database.utils import generate_new_id
 from v1_crypto.utils.auth import get_database_connection
+from datetime import datetime
+
 
 conn = get_database_connection()
 

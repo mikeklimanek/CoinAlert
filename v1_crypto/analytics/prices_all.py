@@ -1,4 +1,9 @@
+# /home/dthxsu/workspace/github.com/dthxsu/CoinAlert/v1_crypto/crypto.py
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from v1_crypto.utils.auth import get_database_connection
+
 
 conn = get_database_connection()
 

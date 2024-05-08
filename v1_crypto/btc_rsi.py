@@ -1,9 +1,12 @@
+# /home/dthxsu/workspace/github.com/dthxsu/CoinAlert/v1_crypto/crypto.py
 import requests
 import pandas as pd
 import os
 import dotenv
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-dotenv.load_dotenv('CoinAlert/v1_crypto/.env')
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 NEW_API_KEY = os.getenv('NEW_API_KEY')
 BASE_URL = 'https://api.polygon.io'
