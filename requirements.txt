@@ -5,3 +5,4 @@ Flask==3.0.3
 libsql-experimental==0.0.34
 schedule==1.2.1
 sendgrid==6.11.0
+pandas==2.2.2
