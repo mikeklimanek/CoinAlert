@@ -5,14 +5,12 @@ import libsql_experimental as libsql
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 NEW_API_KEY = os.getenv('NEW_API_KEY')
 BASE_URL = 'https://api.polygon.io'
 url = os.getenv("TURSO_DATABASE_URL")
 auth_token = os.getenv("TURSO_AUTH_TOKEN")
 
-# Establish database connection
 conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
 conn.sync()
 
@@ -77,6 +75,5 @@ for ticker in stock_symbols:
             print(f"No new data available for {ticker}.")
 
 
-# Display the recent data
 result = conn.execute("SELECT * FROM aapl_historical WHERE timestamp LIKE '%2024-05-07%'").fetchall()
 print(result)

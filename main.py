@@ -8,8 +8,11 @@ logging.basicConfig(
 )
 
 from analytics.results_rsi import print_latest_rsi_report
+from analytics.indicators_report import print_latest_indicators_report
 # from analytics.stocks_rsi import calculate_and_store_rsi_incrementally
 
 # calculate_and_store_rsi_incrementally()
 
-print_latest_rsi_report()
+# print_latest_rsi_report()
+
+print_latest_indicators_report()
