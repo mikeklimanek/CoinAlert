@@ -2,7 +2,7 @@
 Version 1 calls API through pipeline, fetches data to DB and alerts with an email notification on changes over 4-5% in 4hour cycles with top10 crypto coins.
 
 ## Version 2 under development
-API data source migration and DB injection with historical data. Working on new pipelines and live indexes for stocks and crypto.
+API data source migration and DB injection with historical data. Working on new pipelines and live pipelines calculating indicators for stocks and crypto. Preparation for data visualization with Jupyter Notebook.
 
 ## Overview
 This Crypto Price Alert System is designed to monitor cryptocurrency prices, updating every 4 hours via an API pipeline that interacts with a live database. The system cleans and processes the incoming data, calculates changes between each update, and sends email notifications for any price changes in cryptocurrencies that exceed a 5% threshold, either positive or negative.
