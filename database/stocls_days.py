@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import libsql_experimental as libsql
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime
 
 load_dotenv()
 NEW_API_KEY = os.getenv('NEW_API_KEY')
@@ -28,10 +28,9 @@ def fetch_stock_data(ticker, multiplier, timespan, start_date, end_date):
         print(f'Error: {response.status_code}, {response.text}')
         return None
 
-def get_last_n_days(n):
-    today = datetime.now()
-    start_date = today - timedelta(days=n)
-    return start_date.strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')
+def get_date_range(start_date_str):
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d %H:%M:%S')
+    return start_date.strftime('%Y-%m-%d'), start_date.strftime('%Y-%m-%d')
 
 def create_table(ticker):
     table_name = f"{ticker.lower()}_historical"
@@ -70,7 +69,11 @@ def load_stock_symbols(file_path):
     with open(file_path, 'r') as f:
         return [line.strip() for line in f if line.strip()]
 
-start_date, end_date = get_last_n_days(5)
+
+
+
+specific_date_str = '2024-05-11 04:00:00'
+start_date, end_date = get_date_range(specific_date_str)
 multiplier = 1
 timespan = 'day'
 symbols_file = 'utils/symbols.txt'
