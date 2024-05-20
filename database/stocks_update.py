@@ -4,6 +4,7 @@ import pandas as pd
 import libsql_experimental as libsql
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from database.data_fetch import get_data_from_api
 
 load_dotenv()
 NEW_API_KEY = os.getenv('NEW_API_KEY')
@@ -77,3 +78,39 @@ for ticker in stock_symbols:
 
 result = conn.execute("SELECT * FROM aapl_historical WHERE timestamp LIKE '%2024-05-07%'").fetchall()
 print(result)
+
+
+
+def check_and_update_data(ticker):
+    table_name = f"{ticker.lower()}_historical"
+    query = f"SELECT COUNT(*) FROM {table_name} WHERE timestamp >= ?;"
+    two_years_ago = datetime.now() - timedelta(days=2*365)
+    row = conn.execute(query, (two_years_ago.strftime('%Y-%m-%d %H:%M:%S'),)).fetchone()
+    if row and row[0] >= 2*365:
+        yesterday = datetime.now() - timedelta(days=1)
+        api_data = get_data_from_api(ticker, yesterday, yesterday)
+        if api_data:
+            store_new_data(ticker, api_data)
+            print(f"Data updated for {ticker}.")
+        else:
+            print(f"No new data available for {ticker}.")
+    else:
+        print(f"Not enough historical data for {ticker}.")
+
+
+
+
+def store_new_data(ticker, data):
+    table_name = f"{ticker.lower()}_historical"
+    insert_sql = f"""
+    INSERT INTO {table_name} (timestamp, open, close, high, low, volume)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """
+    for entry in data:
+        timestamp = datetime.strptime(entry['date'], '%Y-%m-%d')
+        conn.execute(insert_sql, (
+            timestamp, entry['open'], entry['close'], entry['high'], entry['low'], entry['volume']
+        ))
+    conn.commit()
+    
+    
