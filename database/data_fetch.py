@@ -4,8 +4,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_url = os.getenv("STOCK_API_URL")
-api_key = os.getenv("STOCK_API_KEY")
+api_url = os.getenv("API_URL")
+api_key = os.getenv("API_KEY")
 
 
 
@@ -13,8 +13,8 @@ api_key = os.getenv("STOCK_API_KEY")
 def get_data_from_api(ticker, start_date, end_date):
     params = {
         'symbol': ticker,
-        'start_date': start_date.strftime('%Y-%m-%d'),
-        'end_date': end_date.strftime('%Y-%m-%d'),
+        'start_date': start_date,
+        'end_date': end_date,
         'apikey': api_key
     }
     response = requests.get(api_url, params=params)
