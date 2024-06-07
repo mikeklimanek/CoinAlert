@@ -1,9 +1,11 @@
 import os
 import requests
+import time
 import pandas as pd
 import libsql_experimental as libsql
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from requests.exceptions import HTTPError, ConnectionError
 from database.data_fetch import get_data_from_api
 
 load_dotenv()
@@ -16,9 +18,9 @@ conn = libsql.connect("coin-alert.db", sync_url=url, auth_token=auth_token)
 conn.sync()
 
 def data_exists(ticker):
-    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    from_day = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
     table_name = f"{ticker.lower()}_historical"
-    query = f"SELECT COUNT(*) FROM {table_name} WHERE timestamp LIKE '{yesterday}%'"
+    query = f"SELECT COUNT(*) FROM {table_name} WHERE timestamp LIKE '{from_day}%'"
     count = conn.execute(query).fetchone()[0]
     return count > 0
 
@@ -29,12 +31,18 @@ def fetch_stock_data(ticker, start_date, end_date):
     url = f'{BASE_URL}{endpoint}'
     params = {'apiKey': NEW_API_KEY}
     
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        return response.json().get('results', [])
-    else:
-        print(f'Error: {response.status_code}, {response.text}')
-        return None
+    attempts = 0
+    while attempts < 5:
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            return response.json().get('results', [])
+        except (HTTPError, ConnectionError) as e:
+            print(f'Error: {e}. Retrying...')
+            attempts += 1
+            time.sleep(2 ** attempts)  # Exponential backoff
+    print(f'Failed to fetch data for {ticker} after {attempts} attempts.')
+    return None
 
 def load_stock_symbols(file_path):
     with open(file_path, 'r') as f:
@@ -54,15 +62,19 @@ def insert_data_in_batches(df, table_name, batch_size=100):
     
     for i in range(0, len(rows), batch_size):
         batch = rows[i:i + batch_size]
-        conn.executemany(insert_sql, batch)
-        conn.commit()
-        print(f"Inserted batch into {table_name}: {batch}")
+        try:
+            conn.executemany(insert_sql, batch)
+            conn.commit()
+            print(f"Inserted batch into {table_name}: {batch}")
+        except Exception as e:
+            print(f"Failed to insert into batch: {batch}: {e}")
         
 for ticker in stock_symbols:
     if not data_exists(ticker):
-        print(f'Fetching and updating data for {ticker} for yesterday...')
-        yesterday = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
-        stock_data = fetch_stock_data(ticker, yesterday, yesterday)
+        from_day = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        current_day = (datetime.now() - timedelta(days=5)).strftime('%Y-%m-%d')
+        print(f'Fetching and updating data for {ticker} for {from_day}...')
+        stock_data = fetch_stock_data(ticker, from_day, current_day)
         
         if stock_data:
             df = pd.DataFrame(stock_data)
@@ -76,8 +88,7 @@ for ticker in stock_symbols:
             print(f"No new data available for {ticker}.")
 
 
-result = conn.execute("SELECT * FROM aapl_historical WHERE timestamp LIKE '%2024-05-07%'").fetchall()
-print(result)
+result = conn.execute("SELECT * FROM aapl_historical").fetchall()
 
 
 

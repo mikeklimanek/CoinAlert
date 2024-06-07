@@ -30,7 +30,7 @@ def fetch_stock_data(ticker, multiplier, timespan, start_date, end_date):
 
 def get_two_years_ago():
     today = datetime.now()
-    two_years_ago = today - timedelta(days=2 * 365)
+    two_years_ago = today - timedelta(days=30)
     return two_years_ago.strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')
 
 def create_table(ticker):

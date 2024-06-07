@@ -40,27 +40,3 @@ def calculate_and_store_indicators(ticker):
         print(f"Unable to calculate indicators for {ticker} due to missing data.")
         
 
-def print_latest_indicators_report(stock_symbols):
-    """
-    This function prints the latest indicators report for the given stock symbols.
-    It assumes that the indicators have already been calculated and stored.
-    """
-    for ticker in stock_symbols:
-        indicators = get_latest_indicators(ticker)
-        
-        print(f"Ticker: {ticker}")
-        for indicator, value in indicators.items():
-            print(f"  {indicator}: {value}")
-        print()
-        
-        
-def get_latest_indicators(ticker):
-    """
-    Dummy function to simulate retrieving the latest indicators for a given ticker.
-    Replace this with actual logic to fetch the latest indicators from your data store.
-    """
-    return {
-        "RSI": 45.2,
-        "Moving Average": 150.3,
-        "MACD": -1.5
-    }
