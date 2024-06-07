@@ -15,9 +15,9 @@ def main():
         data = get_data_from_api(ticker, start_date, end_date)
         if data:
             # store_new_data(data)
-            # insert_data_in_batches
-            check_and_update_data(ticker)
-            calculate_and_store_indicators(ticker)
+            insert_data_in_batches
+            # check_and_update_data(ticker)
+            # calculate_and_store_indicators(ticker)
         else:
             print(f"No new data available for {ticker}.")
             

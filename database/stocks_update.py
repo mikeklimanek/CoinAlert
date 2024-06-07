@@ -71,8 +71,8 @@ def insert_data_in_batches(df, table_name, batch_size=100):
         
 for ticker in stock_symbols:
     if not data_exists(ticker):
-        from_day = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-        current_day = (datetime.now() - timedelta(days=5)).strftime('%Y-%m-%d')
+        from_day = (datetime.now() - timedelta(days=6)).strftime('%Y-%m-%d')
+        current_day = (datetime.now() - timedelta(days=6)).strftime('%Y-%m-%d')
         print(f'Fetching and updating data for {ticker} for {from_day}...')
         stock_data = fetch_stock_data(ticker, from_day, current_day)
         
